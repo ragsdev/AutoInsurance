@@ -36,6 +36,18 @@ def check_if_sunday(p_date):
         return False
 
 
+def validate_vehicle(veh_type):
+    list_of_vehicles={"car", "lorry", "bike", "scooter", "bus"}
+    #if veh_type in list_of_vehicles:
+    #    return False
+    #else:
+    #    return True
+    #if veh_type.upper() in (name.upper() for name in list_of_vehicles): #will work for both upper, lower case and upper lower case mixed words
+    if veh_type.lower() in list_of_vehicles: #will work for both upper, lower case and upper lower case mixed words
+        return False
+    else:
+        return True
+
 @api_view(['POST'])
 def submit_claims(request):
     if request.method == 'POST':
@@ -53,9 +65,9 @@ def submit_claims(request):
         birth_date_str = claims_data['birth_date']
         current_age = get_current_age(birth_date_str)
 
-        print(check_age(birth_date_str))
+        #print(check_age(birth_date_str))
         if check_age(birth_date_str):
-            # print(claims_data['birth_date'])
+            print(claims_data['birth_date'])
             # return JsonResponse({'message': "Age should be greater than 18"}, status=status.HTTP_404_NOT_FOUND)
             return JsonResponse({'message': constants.AGE_SHOULD_BE_ABOVE_EIGHTEEN}, status=status.HTTP_404_NOT_FOUND)
 
@@ -77,6 +89,11 @@ def submit_claims(request):
             # return JsonResponse({'message': "Cannot submit a claim for future date"},
             # status=status.HTTP_404_NOT_FOUND)
             return JsonResponse({'message': constants.CANNOT_SUBMIT_FOR_FUTURE_DATE}, status=status.HTTP_404_NOT_FOUND)
+
+        type = claims_data['vehicle_type']
+        print(validate_vehicle(type))
+        if validate_vehicle(type):
+            return JsonResponse({'message': constants.CANNOT_SUBMIT_VEHICLE}, status=status.HTTP_404_NOT_FOUND)
 
         model_data = dict(name=claims_data['name'], age=current_age, address=claims_data['address'],
                           license_num=claims_data['license_num'], id_proof=claims_data['id_proof'],
