@@ -1,3 +1,5 @@
+import string
+
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
@@ -48,6 +50,14 @@ def validate_vehicle(veh_type):
     else:
         return True
 
+def validate_license_num(l_num):
+    if len(l_num) == 7 and l_num.digits:
+        return False
+    else:
+        return True
+
+
+
 @api_view(['POST'])
 def submit_claims(request):
     if request.method == 'POST':
@@ -94,6 +104,11 @@ def submit_claims(request):
         print(validate_vehicle(type))
         if validate_vehicle(type):
             return JsonResponse({'message': constants.CANNOT_SUBMIT_VEHICLE}, status=status.HTTP_404_NOT_FOUND)
+
+        license_number = claims_data['license_num']
+        print(validate_license_num(license_number))
+        if validate_license_num(license_number):
+            return JsonResponse({'message': constants.INVALID_lICENSE_NUM}, status=status.HTTP_404_NOT_FOUND)
 
         model_data = dict(name=claims_data['name'], age=current_age, address=claims_data['address'],
                           license_num=claims_data['license_num'], id_proof=claims_data['id_proof'],
