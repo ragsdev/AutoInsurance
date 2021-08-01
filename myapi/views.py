@@ -51,7 +51,8 @@ def validate_vehicle(veh_type):
         return True
 
 def validate_license_num(l_num):
-    if len(l_num) == 7 and l_num.digits:
+    #if len(l_num) == 7 and l_num.digits:
+    if len(l_num) == 7 and string.digits:
         return False
     else:
         return True
